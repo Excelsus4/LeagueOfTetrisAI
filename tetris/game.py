@@ -1,17 +1,17 @@
 import random
-import os
 
-from .defs import defs
+from . import defs
+from . import term
 
-class game:
+class Game:
     def __init__(self):
         # Initialize clean new Game
-        os.system('color')
+        term.enable_color()
         self.chmMap = [[0] * (defs.Y_MAP_MAX+6) for _ in range(defs.X_MAP_MAX+6)]
         self.chlMap = [[0] * (defs.Y_MAP_MAX+6) for _ in range(defs.X_MAP_MAX+6)]
         self.nexBlk = random.sample(defs.BLK_LIB, 1)[0]
-        self.nexBlk = self.rotateBlock(self.nexBlk, random.randint(0,3))
-        self.pushBlk()
+        self.nexBlk = self.rotate_block(self.nexBlk, random.randint(0,3))
+        self.push_blk()
         self.isChmLost = False
         self.isChlLost = False
         self.reasonText = ""
@@ -20,12 +20,12 @@ class game:
                 self.chmMap[idx][idy] = -1
                 self.chlMap[idx][idy] = -1
 
-    def pushBlk(self):
+    def push_blk(self):
         self.curBlk = self.nexBlk
         self.nexBlk = random.sample(defs.BLK_LIB, 1)[0]
-        self.nexBlk = self.rotateBlock(self.nexBlk, random.randint(0,3))
+        self.nexBlk = self.rotate_block(self.nexBlk, random.randint(0,3))
 
-    def getData(self):
+    def get_data(self):
         # print(self.chmMap)
         # print()
         # TODO: fix the problem of crop
@@ -36,11 +36,11 @@ class game:
 
     def compute(self, chmPos, chmRot, chlPos, chlRot):
         # compute new map using information returned by each AI
-        self.isChmLost, self.chmMap = self.computeMap(self.chmMap, chmPos + 3, self.rotateBlock(self.curBlk, chmRot))
-        self.isChlLost, self.chlMap = self.computeMap(self.chlMap, chlPos + 3, self.rotateBlock(self.curBlk, chlRot))
+        self.isChmLost, self.chmMap = self.compute_map(self.chmMap, chmPos + 3, self.rotate_block(self.curBlk, chmRot))
+        self.isChlLost, self.chlMap = self.compute_map(self.chlMap, chlPos + 3, self.rotate_block(self.curBlk, chlRot))
         return self.isChmLost or self.isChlLost
     
-    def computeMap(self, bmap, pos, block):
+    def compute_map(self, bmap, pos, block):
         clr = True
         ypos = 0
 
@@ -51,7 +51,7 @@ class game:
                     if(block[idx][idy] and bmap[idx+pos][idy+ypos]):
                         clr = False
             
-            if(clr):
+            if clr:
                 ypos += 1
                 continue
             else:
@@ -100,19 +100,19 @@ class game:
 
         return clr, bmap
 
-    def rotateBlock(self, targetBlock, times):
+    def rotate_block(self, targetBlock, times):
         # Clockwise 90deg Rotate
-        if(times == 0):
+        if times == 0:
             return targetBlock
         else:
-            return self.rotateBlock(list(zip(*targetBlock[::-1])), times-1)
+            return self.rotate_block(list(zip(*targetBlock[::-1])), times-1)
 
-    def printBrick(self, brickCode):
-        if(brickCode == -1):
+    def print_brick(self, brickCode):
+        if brickCode == -1:
             print('\33[37m'+'\33[40m' + "▩", end="")
-        elif(brickCode == -2):
+        elif brickCode == -2:
             print('\33[37m'+'\33[40m' + "　", end="")
-        elif(brickCode):
+        elif brickCode:
             if brickCode == 1:
                 print('\33[41m'," ", end="")
             elif brickCode == 2:
@@ -130,58 +130,58 @@ class game:
         else:
             print('\33[37m'+'\33[40m',".", end="")
 
-    def printMap(self, chmName, chlName):
-        self.pushBlk()
-        os.system('cls')
+    def print_map(self, chmName, chlName):
+        self.push_blk()
+        term.clear_screen()
         print(chmName + " vs " + chlName)
         # Top
         for idx in range(0, defs.X_MAP_MAX+2):
-            self.printBrick(-1)
+            self.print_brick(-1)
         for idx in range(0, defs.X_BLK_MAX):
-            self.printBrick(-2)
+            self.print_brick(-2)
         for idx in range(0, defs.X_MAP_MAX+2):
-            self.printBrick(-1)
+            self.print_brick(-1)
 
         # In between
         for idy in range(0, defs.Y_MAP_MAX):
             print("")
             # Champion Map
-            self.printBrick(-1)
+            self.print_brick(-1)
             for idx in range(0, defs.X_MAP_MAX):
-                self.printBrick(self.chmMap[idx+3][idy+3])
-            self.printBrick(-1)
+                self.print_brick(self.chmMap[idx+3][idy+3])
+            self.print_brick(-1)
             # Block Indicator
-            if(idy < 1):
+            if idy < 1:
                 for idx in range(0, 4):
-                    self.printBrick(-1)
-            elif(idy < 1 + defs.Y_BLK_MAX):
+                    self.print_brick(-1)
+            elif idy < 1 + defs.Y_BLK_MAX:
                 for idx in range(0, 4):
                     # Current Block
-                    self.printBrick(self.curBlk[idx][idy-1])
-            elif(idy < 2 + defs.Y_BLK_MAX):     
+                    self.print_brick(self.curBlk[idx][idy-1])
+            elif idy < 2 + defs.Y_BLK_MAX:     
                 for idx in range(0, 4):
-                    self.printBrick(-1)
-            elif(idy < 2 + defs.Y_BLK_MAX * 2):
+                    self.print_brick(-1)
+            elif idy < 2 + defs.Y_BLK_MAX * 2:
                 for idx in range(0, 4):
                     # Next Block
-                    self.printBrick(self.nexBlk[idx][idy-10])
-            elif(idy < 3 + defs.Y_BLK_MAX * 2):
+                    self.print_brick(self.nexBlk[idx][idy-10])
+            elif idy < 3 + defs.Y_BLK_MAX * 2:
                 for idx in range(0, 4):
-                    self.printBrick(-1)
+                    self.print_brick(-1)
             else:
                 for idx in range(0, 4):
-                    self.printBrick(-2)
-            self.printBrick(-1)
+                    self.print_brick(-2)
+            self.print_brick(-1)
             # Challenger Map
             for idx in range(0, defs.X_MAP_MAX):
-                self.printBrick(self.chlMap[idx+3][idy+3])
-            self.printBrick(-1)
+                self.print_brick(self.chlMap[idx+3][idy+3])
+            self.print_brick(-1)
         print("")
         # Bottom
         for idx in range(0, defs.X_MAP_MAX+2):
-            self.printBrick(-1)
+            self.print_brick(-1)
         for idx in range(0, defs.X_BLK_MAX):
-            self.printBrick(-2)
+            self.print_brick(-2)
         for idx in range(0, defs.X_MAP_MAX+2):
-            self.printBrick(-1)
+            self.print_brick(-1)
         print("")

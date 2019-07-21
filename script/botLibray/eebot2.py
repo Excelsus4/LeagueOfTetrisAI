@@ -1,6 +1,6 @@
 from time import sleep
 
-class ai:
+class AI:
     # give your AI a name for display
     CONST_NAME = "ExcelsusE ver 1.1"
 

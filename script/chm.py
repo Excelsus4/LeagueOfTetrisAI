@@ -1,13 +1,13 @@
 from time import sleep
 
-class ai:
+class AI:
     # give your AI a name for display
     CONST_NAME = "ExcelsusE ver 1.1"
 
     def __init__(self):
         pass
 
-    def shapeContour(self, degB):
+    def shape_contour(self, degB):
         temporary = [-1]*4
         for idx in range(0, 4):
             for idy in range(0, 4):
@@ -15,7 +15,7 @@ class ai:
                     temporary[idx] = idy
         return temporary
 
-    def calculateMatchScore(self, conB, conM, position):
+    def calculate_match_score(self, conB, conM, position):
         ## Base Score
         matchScore = 44000
         lowestPoint = -1
@@ -70,7 +70,7 @@ class ai:
         degD = list(zip(*degO[::-1]))
         degT = list(zip(*degD[::-1]))
 
-        blockContour = self.shapeContour(degZ), self.shapeContour(degO), self.shapeContour(degD), self.shapeContour(degT)
+        blockContour = self.shape_contour(degZ), self.shape_contour(degO), self.shape_contour(degD), self.shape_contour(degT)
 
         # Calculate map contour
         mapContour = [0]*10
@@ -99,7 +99,7 @@ class ai:
         # Match Check
         for idr in range(0,4):
             for idx in range(0, 13):
-                scoreSheet[idr*13+idx] += self.calculateMatchScore(blockContour[idr], mapContour, idx-3)
+                scoreSheet[idr*13+idx] += self.calculate_match_score(blockContour[idr], mapContour, idx-3)
 
         # Fetch the max score position and rotation
         choosen = scoreSheet.index(max(scoreSheet))

@@ -1,4 +1,4 @@
-class ai:
+class AI:
     # give your AI a name for display
     CONST_NAME = "Your Bot's Name"
 
