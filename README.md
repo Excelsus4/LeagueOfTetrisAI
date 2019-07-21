@@ -26,7 +26,7 @@ Your algorithm have to return two integer value, each for position and rotation.
 Speed of the game, board size and the block shape is defined in tetris/defs.py file. Feel free to change the speed of the game but be wise to change board size and block shape since some bot codes will only operate on the default config.
 # Contribution
 ## My bot for the public
-If you made a nice bot and want to show them, feel free to put your code in the botLibrary folder and make a pull request, and your 
+If you made a nice bot and want to show them, feel free to put your code in the botLibrary folder and make a pull request. 
 ## Refine on the Tetris Core
 This is a little bit complicated but I will try my best :) so feel free to make a pull request.
 # List of Bot Library
