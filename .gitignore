@@ -1,3 +1,4 @@
 
 *.pyc
 script/notPublic/*
+.idea/*

@@ -7,28 +7,30 @@ from tetris import defs
 
 from time import sleep
 
+
 def main():
-    newRef = referee()
-    newChm = champion()
-    newChl = challenger()
+    new_ref = referee()
+    new_chm = champion()
+    new_chl = challenger()
     
-    while(True):
-        chmMap, chlMap, curBlk, nexBlk = newRef.get_data()
-        chmPos, chmRot = newChm.compute(chmMap, chlMap, curBlk, nexBlk)
-        chlPos, chlRot = newChl.compute(chlMap, chmMap, curBlk, nexBlk)
-        if(newRef.compute(chmPos, chmRot, chlPos, chlRot)):
-            newRef.print_map(newChm.CONST_NAME, newChl.CONST_NAME)
+    while True:
+        chm_map, chl_map, cur_blk, nex_blk = new_ref.get_data()
+        chm_pos, chm_rot = new_chm.compute(chm_map, chl_map, cur_blk, nex_blk)
+        chl_pos, chl_rot = new_chl.compute(chl_map, chm_map, cur_blk, nex_blk)
+        if new_ref.compute(chm_pos, chm_rot, chl_pos, chl_rot):
+            new_ref.print_map(new_chm.CONST_NAME, new_chl.CONST_NAME)
             break
         else:
-            newRef.print_map(newChm.CONST_NAME, newChl.CONST_NAME)
+            new_ref.print_map(new_chm.CONST_NAME, new_chl.CONST_NAME)
             sleep(defs.GAME_SPEED)
             continue
     
-    print("Game Over: "+newRef.reasonText)
-    if newRef.isChmLost:
-        print(newChm.CONST_NAME, "Lost!")
-    if newRef.isChlLost:
-        print(newChl.CONST_NAME, "Lost!")
+    print("Game Over: "+new_ref.reason_text)
+    if new_ref.is_chm_lost:
+        print(new_chm.CONST_NAME, "Lost!")
+    if new_ref.is_chl_lost:
+        print(new_chl.CONST_NAME, "Lost!")
+
 
 if __name__ == "__main__":
     main()

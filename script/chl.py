@@ -6,9 +6,9 @@ class AI:
         self.temp = 6
 
     # method compute is mandatory for playing tetris
-    def compute(self, myMap, opMap, current, next):
-        # myMap is a 10 x 20 2D integer list representing the map for the player
-        # opMap is the 10 x 20 2D integer list representing the map for the opponent player
+    def compute(self, my_map, op_map, current, next):
+        # my_map is a 10 x 20 2D integer list representing the map for the player
+        # op_map is the 10 x 20 2D integer list representing the map for the opponent player
         # map's origin is located on UPPERLEFT corner
         
         # current is a 4 x 4 2D integer list representing current block's shape

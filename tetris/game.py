@@ -1,85 +1,88 @@
+from __future__ import print_function
 import random
 
 from . import defs
 from . import term
 
+
 class Game:
     def __init__(self):
         # Initialize clean new Game
         term.enable_color()
-        self.chmMap = [[0] * (defs.Y_MAP_MAX+6) for _ in range(defs.X_MAP_MAX+6)]
-        self.chlMap = [[0] * (defs.Y_MAP_MAX+6) for _ in range(defs.X_MAP_MAX+6)]
-        self.nexBlk = random.sample(defs.BLK_LIB, 1)[0]
-        self.nexBlk = self.rotate_block(self.nexBlk, random.randint(0,3))
+        self.chm_map = [[0] * (defs.Y_MAP_MAX+6) for _ in range(defs.X_MAP_MAX+6)]
+        self.chl_map = [[0] * (defs.Y_MAP_MAX+6) for _ in range(defs.X_MAP_MAX+6)]
+        self.cur_blk = random.sample(defs.BLK_LIB, 1)[0]
+        self.cur_blk = self.rotate_block(self.nex_blk, random.randint(0,3))
+        self.nex_blk = random.sample(defs.BLK_LIB, 1)[0]
+        self.nex_blk = self.rotate_block(self.nex_blk, random.randint(0,3))
         self.push_blk()
-        self.isChmLost = False
-        self.isChlLost = False
-        self.reasonText = ""
+        self.is_chm_lost = False
+        self.is_chl_lost = False
+        self.reason_text = ""
         for idy in range(3 + defs.Y_MAP_MAX, 6 + defs.Y_MAP_MAX):
             for idx in range(3, 3 + defs.X_MAP_MAX):
-                self.chmMap[idx][idy] = -1
-                self.chlMap[idx][idy] = -1
+                self.chm_map[idx][idy] = -1
+                self.chl_map[idx][idy] = -1
 
     def push_blk(self):
-        self.curBlk = self.nexBlk
-        self.nexBlk = random.sample(defs.BLK_LIB, 1)[0]
-        self.nexBlk = self.rotate_block(self.nexBlk, random.randint(0,3))
+        self.cur_blk = self.nex_blk
+        self.nex_blk = random.sample(defs.BLK_LIB, 1)[0]
+        self.nex_blk = self.rotate_block(self.nex_blk, random.randint(0,3))
 
     def get_data(self):
-        # print(self.chmMap)
+        # print(self.chm_map)
         # print()
         # TODO: fix the problem of crop
-        subChm = [seq[3:defs.Y_MAP_MAX+3] for seq in self.chmMap[3:defs.X_MAP_MAX+3]]
-        subChl = [seq[3:defs.Y_MAP_MAX+3] for seq in self.chlMap[3:defs.X_MAP_MAX+3]]
+        sub_chm = [seq[3:defs.Y_MAP_MAX+3] for seq in self.chm_map[3:defs.X_MAP_MAX+3]]
+        sub_chl = [seq[3:defs.Y_MAP_MAX+3] for seq in self.chl_map[3:defs.X_MAP_MAX+3]]
 
-        return subChm, subChl, self.curBlk, self.nexBlk
+        return sub_chm, sub_chl, self.cur_blk, self.nex_blk
 
-    def compute(self, chmPos, chmRot, chlPos, chlRot):
+    def compute(self, chm_pos, chm_rot, chl_pos, chl_rot):
         # compute new map using information returned by each AI
-        self.isChmLost, self.chmMap = self.compute_map(self.chmMap, chmPos + 3, self.rotate_block(self.curBlk, chmRot))
-        self.isChlLost, self.chlMap = self.compute_map(self.chlMap, chlPos + 3, self.rotate_block(self.curBlk, chlRot))
-        return self.isChmLost or self.isChlLost
+        self.is_chm_lost, self.chm_map = self.compute_map(self.chm_map, chm_pos + 3, self.rotate_block(self.cur_blk, chm_rot))
+        self.is_chl_lost, self.chl_map = self.compute_map(self.chl_map, chl_pos + 3, self.rotate_block(self.cur_blk, chl_rot))
+        return self.is_chm_lost or self.is_chl_lost
     
-    def compute_map(self, bmap, pos, block):
+    def compute_map(self, b_map, pos, block):
         clr = True
-        ypos = 0
+        y_pos = 0
 
         # Block Drop
         while True:
             for idy in range(0, 4):
                 for idx in range(0, 4):
-                    if(block[idx][idy] and bmap[idx+pos][idy+ypos]):
+                    if block[idx][idy] and b_map[idx+pos][idy+y_pos]:
                         clr = False
             
             if clr:
-                ypos += 1
+                y_pos += 1
                 continue
             else:
-                ypos -= 1
+                y_pos -= 1
                 break
 
         for idy in range(0, 4):
             for idx in range(0, 4):
-                if(block[idx][idy]):
-                    bmap[idx+pos][idy+ypos] = block[idx][idy]
+                if block[idx][idy]:
+                    b_map[idx+pos][idy+y_pos] = block[idx][idy]
 
         # Full Line Check
-        holeFlag = False
-        lineFlag = True
+        line_flag = True
 
-        while lineFlag:
-            lineFlag = False
+        while line_flag:
+            line_flag = False
             for idy in range(3, defs.Y_MAP_MAX+3):
-                holeFlag = False
+                hole_flag = False
                 for idx in range(3, defs.X_MAP_MAX+3):
-                    if not bmap[idx][idy]:
-                        holeFlag = True
+                    if not b_map[idx][idy]:
+                        hole_flag = True
                         break
-                if not holeFlag:
+                if not hole_flag:
                     for ldy in range(idy, 0, -1):
                         for idx in range(3, defs.X_MAP_MAX+3):
-                            bmap[idx][ldy] = bmap[idx][ldy-1]
-                    lineFlag = True
+                            b_map[idx][ldy] = b_map[idx][ldy-1]
+                    line_flag = True
                     break
 
         clr = False
@@ -87,59 +90,60 @@ class Game:
         # Top Check
         for idy in range(0, 3):
             for idx in range(3, defs.X_MAP_MAX+3):
-                if bmap[idx][idy]:
+                if b_map[idx][idy]:
                     clr = True
-                    self.reasonText = "Tower is too high!"
+                    self.reason_text = "Tower is too high!"
 
         # Bound Check
         for idy in range(0, defs.Y_MAP_MAX+6):
             for idx in range(0, 3):
-                if bmap[idx][idy] or bmap[idx+defs.X_MAP_MAX+3][idy]:
+                if b_map[idx][idy] or b_map[idx+defs.X_MAP_MAX+3][idy]:
                     clr = True
-                    self.reasonText = "Block Out of Bound!"
+                    self.reason_text = "Block Out of Bound!"
 
-        return clr, bmap
+        return clr, b_map
 
-    def rotate_block(self, targetBlock, times):
+    def rotate_block(self, target_block, times):
         # Clockwise 90deg Rotate
         if times == 0:
-            return targetBlock
+            return target_block
         else:
-            return self.rotate_block(list(zip(*targetBlock[::-1])), times-1)
+            return self.rotate_block(list(zip(*target_block[::-1])), times-1)
 
-    def print_brick(self, brickCode):
-        if brickCode == -1:
+    @staticmethod
+    def print_brick(brick_code):
+        if brick_code == -1:
             print('\33[37m'+'\33[40m' + "▩", end="")
-        elif brickCode == -2:
+        elif brick_code == -2:
             print('\33[37m'+'\33[40m' + "　", end="")
-        elif brickCode:
-            if brickCode == 1:
+        elif brick_code:
+            if brick_code == 1:
                 print('\33[41m'," ", end="")
-            elif brickCode == 2:
+            elif brick_code == 2:
                 print('\33[42m'," ", end="")
-            elif brickCode == 3:
+            elif brick_code == 3:
                 print('\33[105m'," ", end="")
-            elif brickCode == 4:
+            elif brick_code == 4:
                 print('\33[104m'," ", end="")
-            elif brickCode == 5:
+            elif brick_code == 5:
                 print('\33[45m'," ", end="")
-            elif brickCode == 6:
+            elif brick_code == 6:
                 print('\33[46m'," ", end="")
-            elif brickCode == 7:
+            elif brick_code == 7:
                 print('\33[101m'," ", end="")
         else:
             print('\33[37m'+'\33[40m',".", end="")
 
-    def print_map(self, chmName, chlName):
+    def print_map(self, chm_name, chl_name):
         self.push_blk()
         term.clear_screen()
-        print(chmName + " vs " + chlName)
+        print(chm_name + " vs " + chl_name)
         # Top
-        for idx in range(0, defs.X_MAP_MAX+2):
+        for _ in range(0, defs.X_MAP_MAX+2):
             self.print_brick(-1)
-        for idx in range(0, defs.X_BLK_MAX):
+        for _ in range(0, defs.X_BLK_MAX):
             self.print_brick(-2)
-        for idx in range(0, defs.X_MAP_MAX+2):
+        for _ in range(0, defs.X_MAP_MAX+2):
             self.print_brick(-1)
 
         # In between
@@ -148,40 +152,40 @@ class Game:
             # Champion Map
             self.print_brick(-1)
             for idx in range(0, defs.X_MAP_MAX):
-                self.print_brick(self.chmMap[idx+3][idy+3])
+                self.print_brick(self.chm_map[idx+3][idy+3])
             self.print_brick(-1)
             # Block Indicator
             if idy < 1:
-                for idx in range(0, 4):
+                for _ in range(0, 4):
                     self.print_brick(-1)
             elif idy < 1 + defs.Y_BLK_MAX:
                 for idx in range(0, 4):
                     # Current Block
-                    self.print_brick(self.curBlk[idx][idy-1])
+                    self.print_brick(self.cur_blk[idx][idy-1])
             elif idy < 2 + defs.Y_BLK_MAX:     
-                for idx in range(0, 4):
+                for _ in range(0, 4):
                     self.print_brick(-1)
             elif idy < 2 + defs.Y_BLK_MAX * 2:
                 for idx in range(0, 4):
                     # Next Block
-                    self.print_brick(self.nexBlk[idx][idy-10])
+                    self.print_brick(self.nex_blk[idx][idy-10])
             elif idy < 3 + defs.Y_BLK_MAX * 2:
-                for idx in range(0, 4):
+                for _ in range(0, 4):
                     self.print_brick(-1)
             else:
-                for idx in range(0, 4):
+                for _ in range(0, 4):
                     self.print_brick(-2)
             self.print_brick(-1)
             # Challenger Map
             for idx in range(0, defs.X_MAP_MAX):
-                self.print_brick(self.chlMap[idx+3][idy+3])
+                self.print_brick(self.chl_map[idx+3][idy+3])
             self.print_brick(-1)
         print("")
         # Bottom
-        for idx in range(0, defs.X_MAP_MAX+2):
+        for _ in range(0, defs.X_MAP_MAX+2):
             self.print_brick(-1)
-        for idx in range(0, defs.X_BLK_MAX):
+        for _ in range(0, defs.X_BLK_MAX):
             self.print_brick(-2)
-        for idx in range(0, defs.X_MAP_MAX+2):
+        for _ in range(0, defs.X_MAP_MAX+2):
             self.print_brick(-1)
         print("")

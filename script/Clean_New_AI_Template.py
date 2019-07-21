@@ -3,10 +3,10 @@ class AI:
     CONST_NAME = "Your Bot's Name"
 
     # method compute is mandatory for playing tetris
-    def compute(self, myMap, opMap, current, next):
-        # myMap is a 10 x 20 2D integer list representing the map for the player
-        # opMap is the 10 x 20 2D integer list representing the map for the opponent player
-        # map's origin is located on UPPERLEFT corner
+    def compute(self, my_map, op_map, current, next):
+        # my_map is a 10 x 20 2D integer list representing the map for the player
+        # op_map is the 10 x 20 2D integer list representing the map for the opponent player
+        # map's origin is located on UPPER LEFT corner
 
         # current is a 4 x 4 2D integer list representing current block's shape
         # next is the 4 x 4 2D integer list representing next block's shape

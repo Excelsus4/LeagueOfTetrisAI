@@ -1,4 +1,4 @@
-GAME_SPEED = .05
+GAME_SPEED: float = .05
 X_MAP_MAX = 10
 Y_MAP_MAX = 20
 X_BLK_MAX = 4
