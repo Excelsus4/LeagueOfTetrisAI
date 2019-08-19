@@ -12,7 +12,7 @@ class Game:
         self.chm_map = [[0] * (defs.Y_MAP_MAX+6) for _ in range(defs.X_MAP_MAX+6)]
         self.chl_map = [[0] * (defs.Y_MAP_MAX+6) for _ in range(defs.X_MAP_MAX+6)]
         self.cur_blk = random.sample(defs.BLK_LIB, 1)[0]
-        self.cur_blk = self.rotate_block(self.nex_blk, random.randint(0,3))
+        self.cur_blk = self.rotate_block(self.cur_blk, random.randint(0,3))
         self.nex_blk = random.sample(defs.BLK_LIB, 1)[0]
         self.nex_blk = self.rotate_block(self.nex_blk, random.randint(0,3))
         self.push_blk()
