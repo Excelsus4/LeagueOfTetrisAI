@@ -18,9 +18,9 @@ This is a 20 by 10 integer list of the game board which the AI is playing on, th
 This is the opponent's game board but for now there is no interaction between the players so this would not matter so much.
 ### current
 This is the block ON HAND so is also the most important thing you want to compute with. It is expressed as 4 by 4 integer list in similar form with Map.
-## next
+### next
 For those complicated algorithms that want to compute with one more step, here is your "next block". This will be your next "current" when you place your current.
-## Return
+### Return
 Your algorithm have to return two integer value, each for position and rotation. For simplicity, no movements are allowed during the drop so you will only allowed to choose the position and rotation then the block will be instantly dropped(sorry for that first hole made when the block is S or Z). The value range is -3 to 9 for position and 0 to 3 for rotation. If your algorithm place the block on invalid position(like out of the board), your bot will lose instantly.
 # Configuration
 Speed of the game, board size and the block shape is defined in tetris/defs.py file. Feel free to change the speed of the game but be wise to change board size and block shape since some bot codes will only operate on the default config.
